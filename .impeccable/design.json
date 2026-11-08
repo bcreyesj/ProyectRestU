@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-06T18:45:00.000Z",
+  "title": "Design System: Restaurante Admin",
+  "extensions": {
+    "colorMeta": {
+      "navy": {
+        "role": "primary",
+        "displayName": "Deep Navy",
+        "canonical": "#0f172a",
+        "tonalRamp": ["#080d19", "#0f172a", "#1e293b", "#1e3a5f", "#334155", "#64748b", "#8d9bb0", "#c3ccda", "#e9eef5"]
+      },
+      "blue": {
+        "role": "primary",
+        "displayName": "Action Blue",
+        "canonical": "#2563eb",
+        "tonalRamp": ["#172554", "#1e3a8a", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93b4fb", "#93c5fd", "#bfdbfe", "#eff6ff"]
+      },
+      "green": {
+        "role": "secondary",
+        "displayName": "Emerald State",
+        "canonical": "#047857",
+        "tonalRamp": ["#022c22", "#064e3b", "#047857", "#059669", "#10b981", "#34d399", "#065f46", "#a7f3d0", "#ecfdf5"]
+      },
+      "amber": {
+        "role": "secondary",
+        "displayName": "Inventory Attention",
+        "canonical": "#92400e",
+        "tonalRamp": ["#451a03", "#78350f", "#92400e", "#b45309", "#d97706", "#f59e0b", "#fde68a", "#f1d59c", "#fef3c7", "#fffbeb"]
+      },
+      "red": {
+        "role": "semantic",
+        "displayName": "Unavailable State",
+        "canonical": "#b91c1c",
+        "tonalRamp": ["#450a0a", "#7f1d1d", "#991b1b", "#b91c1c", "#dc2626", "#f87171", "#fecaca", "#fef2f2"]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Slate Canvas",
+        "canonical": "#f1f5f9",
+        "tonalRamp": ["#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#d5deea", "#dbe3ed", "#e2e8f0", "#f8fafc", "#f1f5f9"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Page title",
+        "purpose": "Names the active administration section."
+      },
+      "body": {
+        "displayName": "Product UI sans",
+        "purpose": "Keeps navigation, tables, controls, and report labels consistent."
+      },
+      "label": {
+        "displayName": "Compact data label",
+        "purpose": "Uses 10–12px semibold type for table headings, captions, and controls."
+      },
+      "metric": {
+        "displayName": "Operational summary value",
+        "purpose": "Shows current totals without fabricated comparison trends."
+      }
+    },
+    "shadows": [
+      {
+        "name": "surface-rest",
+        "value": "0 1px 2px rgb(15 23 42 / 5%)",
+        "purpose": "Separates bordered panels from the cool slate canvas."
+      },
+      {
+        "name": "panel-hover",
+        "value": "0 4px 14px rgb(15 23 42 / 4%)",
+        "purpose": "Adds restrained feedback to metric cards."
+      },
+      {
+        "name": "dialog-focus",
+        "value": "0 24px 70px rgb(15 23 42 / 24%)",
+        "purpose": "Places a focused database form above the administration surface."
+      },
+      {
+        "name": "mobile-drawer",
+        "value": "12px 0 32px rgb(15 23 42 / 20%)",
+        "purpose": "Separates the open navigation drawer from the page."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-state",
+        "value": "0.18s ease",
+        "purpose": "Provides brief feedback for hover, focus, and press states."
+      },
+      {
+        "name": "loading",
+        "value": "0.7s linear infinite",
+        "purpose": "Communicates active refresh or form submission."
+      }
+    ],
+    "breakpoints": [
+      { "name": "tight-metrics", "value": "1240px" },
+      { "name": "narrow-sidebar", "value": "1020px" },
+      { "name": "mobile-drawer", "value": "820px" },
+      { "name": "compact-phone", "value": "560px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The blue primary action for an administration task.",
+      "html": "<button class=\"ds-button-primary\"><svg aria-hidden=\"true\"></svg>Guardar</button>",
+      "css": ".ds-button-primary { min-height: 40px; padding: 0 14px; border: 0; border-radius: 9px; background: var(--blue); color: #fff; font: 650 12px Inter, 'Segoe UI', sans-serif; transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease; } .ds-button-primary:hover { background: var(--blue-hover); } .ds-button-primary:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "global-search",
+      "description": "Filters records in the active section and supports a keyboard shortcut.",
+      "html": "<label class=\"ds-search\"><svg aria-hidden=\"true\"></svg><input type=\"search\" placeholder=\"Buscar en esta vista…\"></label>",
+      "css": ".ds-search { display: flex; min-height: 39px; align-items: center; gap: 9px; padding: 0 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-hover); color: var(--muted); } .ds-search:focus-within { border-color: #93b4fb; box-shadow: 0 0 0 3px var(--focus-ring); } .ds-search input { min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); }"
+    },
+    {
+      "name": "Metric Card",
+      "kind": "card",
+      "refersTo": "metric-card",
+      "description": "A current database-backed total with a compact semantic icon.",
+      "html": "<article class=\"ds-metric-card\"><span class=\"ds-metric-icon\"><svg aria-hidden=\"true\"></svg></span><strong>—</strong><span>Datos actuales</span></article>",
+      "css": ".ds-metric-card { display: flex; min-height: 118px; align-items: center; gap: 14px; padding: 19px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-sm); } .ds-metric-icon { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 11px; background: var(--blue-soft); color: var(--blue); }"
+    },
+    {
+      "name": "Report Panel",
+      "kind": "card",
+      "refersTo": "report-panel",
+      "description": "Contains one chart, occupancy view, table, or operation module.",
+      "html": "<section class=\"ds-report-panel\"><header><h2>Ventas por mesero</h2><p>Órdenes y total vendido</p></header></section>",
+      "css": ".ds-report-panel { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-sm); color: var(--ink); } .ds-report-panel h2 { margin: 0 0 4px; font-size: 13px; font-weight: 700; } .ds-report-panel p { margin: 0; color: var(--muted); font-size: 11px; }"
+    },
+    {
+      "name": "Active Navigation Item",
+      "kind": "nav",
+      "refersTo": "nav-link-active",
+      "description": "Makes the selected admin section clear in the fixed navy rail.",
+      "html": "<button class=\"ds-nav-item\" aria-current=\"page\"><svg aria-hidden=\"true\"></svg>Resumen</button>",
+      "css": ".ds-nav-item { display: flex; min-height: 44px; align-items: center; gap: 12px; padding: 0 12px; border: 0; border-radius: 9px; background: #1e3a5f; color: #fff; text-align: left; font: 650 13px Inter, 'Segoe UI', sans-serif; } .ds-nav-item svg { color: #93c5fd; }"
+    },
+    {
+      "name": "Availability Status",
+      "kind": "chip",
+      "refersTo": "availability-badge",
+      "description": "Pairs explicit availability text with semantic emerald or red.",
+      "html": "<span class=\"ds-status\">Disponible</span>",
+      "css": ".ds-status { display: inline-flex; padding: 4px 8px; border-radius: 999px; background: var(--green-soft); color: var(--green); font: 650 10px Inter, 'Segoe UI', sans-serif; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The restaurant operations console",
+    "overview": "A data-first console lets a restaurant manager scan current SQL-backed reports and open supported operations. Deep navy navigation anchors the interface, a slate canvas and white panels keep records legible, blue carries actions, and emerald/amber/red encode operational state. Current values remain distinct from date trends the source views do not provide.",
+    "keyCharacteristics": [
+      "Persistent navy navigation with a responsive drawer.",
+      "Utility header with active-section search, database status, local date/time, refresh, and local administration context.",
+      "Current report data and tables stay in the user's scan path.",
+      "SVG line icons and text-paired semantic states remain consistent across modules."
+    ],
+    "rules": [
+      {
+        "name": "The State-Color Rule",
+        "body": "Blue means act; emerald means available; amber means review; red means unavailable or occupied. Color is paired with text.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fact-First Rule",
+        "body": "Use current SQL-backed values and never invent KPI trends or authenticated identity.",
+        "section": "layout"
+      }
+    ],
+    "dos": [
+      "Do show database-backed values and distinct loading, empty, disconnected, and error states.",
+      "Do keep every action aligned with the supplied stored procedures.",
+      "Do preserve table detail when a chart is limited for scanability.",
+      "Do pair status color with explicit text."
+    ],
+    "donts": [
+      "Don't invent KPI trends, user identity, or sample data.",
+      "Don't use amber for primary actions.",
+      "Don't hide table overflow by shrinking data labels beyond readability.",
+      "Don't expose the local administration server to a public network without authentication."
+    ]
+  }
+}
