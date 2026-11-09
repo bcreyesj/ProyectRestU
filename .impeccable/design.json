@@ -13,7 +13,7 @@
       "blue": {
         "role": "primary",
         "displayName": "Action Blue",
-        "canonical": "#2563eb",
+        "canonical": "#1d4ed8",
         "tonalRamp": ["#172554", "#1e3a8a", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93b4fb", "#93c5fd", "#bfdbfe", "#eff6ff"]
       },
       "green": {
@@ -36,48 +36,48 @@
       },
       "canvas": {
         "role": "neutral",
-        "displayName": "Slate Canvas",
-        "canonical": "#f1f5f9",
+        "displayName": "Near-white Slate Canvas",
+        "canonical": "#f8fafc",
         "tonalRamp": ["#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#d5deea", "#dbe3ed", "#e2e8f0", "#f8fafc", "#f1f5f9"]
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Page title",
-        "purpose": "Names the active administration section."
+        "purpose": "Names the active administration section in bold, high-contrast type."
       },
       "body": {
         "displayName": "Product UI sans",
         "purpose": "Keeps navigation, tables, controls, and report labels consistent."
       },
       "label": {
-        "displayName": "Compact data label",
-        "purpose": "Uses 10–12px semibold type for table headings, captions, and controls."
+        "displayName": "Data label",
+        "purpose": "Uses bold uppercase 12px type for desktop table headings."
       },
       "metric": {
         "displayName": "Operational summary value",
-        "purpose": "Shows current totals without fabricated comparison trends."
+        "purpose": "Uses large 38px numerals to show current totals without fabricated trends."
       }
     },
     "shadows": [
       {
         "name": "surface-rest",
-        "value": "0 1px 2px rgb(15 23 42 / 5%)",
-        "purpose": "Separates bordered panels from the cool slate canvas."
+        "value": "0 4px 0 0 #0f172a",
+        "purpose": "Projects a crisp ink slab beneath outlined white panels."
       },
       {
         "name": "panel-hover",
-        "value": "0 4px 14px rgb(15 23 42 / 4%)",
-        "purpose": "Adds restrained feedback to metric cards."
+        "value": "0 6px 0 0 #0f172a",
+        "purpose": "Raises outlined metric cards on hover."
       },
       {
         "name": "dialog-focus",
-        "value": "0 24px 70px rgb(15 23 42 / 24%)",
-        "purpose": "Places a focused database form above the administration surface."
+        "value": "0 8px 0 0 #0f172a",
+        "purpose": "Keeps the focused database dialog within the outlined visual system."
       },
       {
         "name": "mobile-drawer",
-        "value": "12px 0 32px rgb(15 23 42 / 20%)",
+        "value": "8px 0 0 #0f172a",
         "purpose": "Separates the open navigation drawer from the page."
       }
     ],
@@ -107,7 +107,7 @@
       "refersTo": "button-primary",
       "description": "The blue primary action for an administration task.",
       "html": "<button class=\"ds-button-primary\"><svg aria-hidden=\"true\"></svg>Guardar</button>",
-      "css": ".ds-button-primary { min-height: 40px; padding: 0 14px; border: 0; border-radius: 9px; background: var(--blue); color: #fff; font: 650 12px Inter, 'Segoe UI', sans-serif; transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease; } .ds-button-primary:hover { background: var(--blue-hover); } .ds-button-primary:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }"
+      "css": ".ds-button-primary { min-height: 44px; padding: 0 16px; border: 2px solid #0f172a; border-radius: 4px; background: var(--blue); color: #fff; font: 750 14px Inter, 'Segoe UI', sans-serif; box-shadow: 0 4px 0 #0f172a; transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease; } .ds-button-primary:hover { background: var(--blue-hover); box-shadow: 0 6px 0 #0f172a; transform: translateY(-2px); } .ds-button-primary:active { box-shadow: 0 0 0; transform: translateY(2px); } .ds-button-primary:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }"
     },
     {
       "name": "Search Field",
@@ -115,7 +115,7 @@
       "refersTo": "global-search",
       "description": "Filters records in the active section and supports a keyboard shortcut.",
       "html": "<label class=\"ds-search\"><svg aria-hidden=\"true\"></svg><input type=\"search\" placeholder=\"Buscar en esta vista…\"></label>",
-      "css": ".ds-search { display: flex; min-height: 39px; align-items: center; gap: 9px; padding: 0 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-hover); color: var(--muted); } .ds-search:focus-within { border-color: #93b4fb; box-shadow: 0 0 0 3px var(--focus-ring); } .ds-search input { min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); }"
+      "css": ".ds-search { display: flex; min-height: 46px; align-items: center; gap: 9px; padding: 0 12px; border: 2px solid #0f172a; border-radius: 4px; background: var(--surface-hover); color: var(--muted); } .ds-search:focus-within { border-color: var(--blue); box-shadow: 0 4px 0 #0f172a; } .ds-search input { min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); }"
     },
     {
       "name": "Metric Card",
@@ -123,7 +123,7 @@
       "refersTo": "metric-card",
       "description": "A current database-backed total with a compact semantic icon.",
       "html": "<article class=\"ds-metric-card\"><span class=\"ds-metric-icon\"><svg aria-hidden=\"true\"></svg></span><strong>—</strong><span>Datos actuales</span></article>",
-      "css": ".ds-metric-card { display: flex; min-height: 118px; align-items: center; gap: 14px; padding: 19px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-sm); } .ds-metric-icon { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 11px; background: var(--blue-soft); color: var(--blue); }"
+      "css": ".ds-metric-card { display: flex; min-height: 148px; align-items: center; gap: 14px; padding: 22px; border: 2px solid #0f172a; border-radius: 4px; background: var(--surface); box-shadow: 0 4px 0 #0f172a; } .ds-metric-card strong { font-size: 38px; font-weight: 800; } .ds-metric-icon { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 4px; background: var(--blue-soft); color: var(--blue); }"
     },
     {
       "name": "Report Panel",
@@ -131,7 +131,7 @@
       "refersTo": "report-panel",
       "description": "Contains one chart, occupancy view, table, or operation module.",
       "html": "<section class=\"ds-report-panel\"><header><h2>Ventas por mesero</h2><p>Órdenes y total vendido</p></header></section>",
-      "css": ".ds-report-panel { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-sm); color: var(--ink); } .ds-report-panel h2 { margin: 0 0 4px; font-size: 13px; font-weight: 700; } .ds-report-panel p { margin: 0; color: var(--muted); font-size: 11px; }"
+      "css": ".ds-report-panel { min-width: 0; overflow: hidden; border: 2px solid #0f172a; border-radius: 4px; background: var(--surface); box-shadow: 0 4px 0 #0f172a; color: var(--ink); } .ds-report-panel h2 { margin: 0 0 4px; font-size: 13px; font-weight: 700; } .ds-report-panel p { margin: 0; color: var(--muted); font-size: 11px; }"
     },
     {
       "name": "Active Navigation Item",
@@ -139,7 +139,7 @@
       "refersTo": "nav-link-active",
       "description": "Makes the selected admin section clear in the fixed navy rail.",
       "html": "<button class=\"ds-nav-item\" aria-current=\"page\"><svg aria-hidden=\"true\"></svg>Resumen</button>",
-      "css": ".ds-nav-item { display: flex; min-height: 44px; align-items: center; gap: 12px; padding: 0 12px; border: 0; border-radius: 9px; background: #1e3a5f; color: #fff; text-align: left; font: 650 13px Inter, 'Segoe UI', sans-serif; } .ds-nav-item svg { color: #93c5fd; }"
+      "css": ".ds-nav-item { display: flex; min-height: 44px; align-items: center; gap: 12px; padding: 0 12px; border: 2px solid #0f172a; border-radius: 4px; background: #1e3a5f; color: #fff; text-align: left; font: 650 13px Inter, 'Segoe UI', sans-serif; } .ds-nav-item svg { color: #93c5fd; }"
     },
     {
       "name": "Availability Status",
@@ -152,11 +152,12 @@
   ],
   "narrative": {
     "northStar": "The restaurant operations console",
-    "overview": "A data-first console lets a restaurant manager scan current SQL-backed reports and open supported operations. Deep navy navigation anchors the interface, a slate canvas and white panels keep records legible, blue carries actions, and emerald/amber/red encode operational state. Current values remain distinct from date trends the source views do not provide.",
+    "overview": "A high-contrast neo-brutalist console lets a restaurant manager scan current SQL-backed reports and open supported operations. Deep navy navigation anchors a near-white slate canvas; two-pixel ink outlines and offset slab shadows frame white panels, and blue carries actions while emerald/amber/red encode operational state. Current values remain distinct from date trends the source views do not provide.",
     "keyCharacteristics": [
-      "Persistent navy navigation with a responsive drawer.",
+      "A 270px navy navigation rail with a responsive drawer.",
       "Utility header with active-section search, database status, local date/time, refresh, and local administration context.",
-      "Current report data and tables stay in the user's scan path.",
+      "38px KPI figures and generously padded 15px table rows keep current reports legible.",
+      "Outlined components and solid offset shadows pair with tactile button press states.",
       "SVG line icons and text-paired semantic states remain consistent across modules."
     ],
     "rules": [

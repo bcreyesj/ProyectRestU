@@ -1,3 +1,8 @@
+// ==========================================
+// ESTADO, FORMATOS Y UTILIDADES DEL DOM
+// ==========================================
+
+/** Guarda los datos cargados y la sección activa durante la sesión del panel. */
 const state = {
   reports: null,
   lookups: null,
@@ -8,9 +13,13 @@ const state = {
   currentSection: "inicio"
 };
 
+/** Centraliza los formatos numéricos y la paleta compartida por los gráficos. */
 const money = new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 2 });
 const number = new Intl.NumberFormat("es-MX", { maximumFractionDigits: 2 });
 const chartColors = ["#2563eb", "#059669", "#f59e0b", "#8b5cf6", "#db2777", "#0f766e"];
+const salesChartColors = { bar: "#2563EB", leader: "#1D4ED8", outline: "#0F172A" };
+
+/** Relaciona los identificadores internos de sección con sus títulos visibles. */
 const sectionTitles = {
   inicio: "Resumen",
   platillos: "Platillos",
@@ -19,11 +28,33 @@ const sectionTitles = {
   inventario: "Inventario"
 };
 
+/**
+ * Busca el primer elemento que coincide con un selector CSS.
+ * @param {string} selector Selector CSS del elemento.
+ * @param {ParentNode} [root=document] Nodo desde el que se realiza la búsqueda.
+ * @returns {Element|null} Elemento encontrado o null si no existe.
+ */
 const $ = (selector, root = document) => root.querySelector(selector);
+
+/**
+ * Convierte texto dinámico en una cadena segura para insertar en HTML.
+ * @param {*} value Valor que se desea escapar.
+ * @returns {string} Texto con caracteres HTML especiales codificados.
+ */
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 })[char]);
 
+// ==========================================
+// API, NOTIFICACIONES Y ESTADO DE CONEXIÓN
+// ==========================================
+
+/**
+ * Envía una solicitud al backend y convierte las respuestas no exitosas en errores.
+ * @param {string} url Ruta relativa de la API.
+ * @param {RequestInit} [options={}] Opciones estándar de fetch.
+ * @returns {Promise<Object>} Cuerpo JSON devuelto por el servidor.
+ */
 async function api(url, options = {}) {
   const response = await fetch(url, {
     ...options,
@@ -37,6 +68,12 @@ async function api(url, options = {}) {
   return payload;
 }
 
+/**
+ * Muestra un mensaje temporal de éxito o error en el toast del panel.
+ * @param {string} message Texto que se mostrará.
+ * @param {boolean} [isError=false] Indica si el mensaje debe marcarse como error.
+ * @returns {void}
+ */
 function showToast(message, isError = false) {
   const toast = $("#toast-message");
   toast.textContent = message;
@@ -46,6 +83,12 @@ function showToast(message, isError = false) {
   showToast.timeout = window.setTimeout(() => { toast.hidden = true; }, 4200);
 }
 
+/**
+ * Actualiza los indicadores visuales de conexión y, si aplica, el mensaje de alerta.
+ * @param {boolean} online Indica si el backend está disponible.
+ * @param {string} [message=""] Mensaje explicativo cuando no hay conexión.
+ * @returns {void}
+ */
 function setConnection(online, message = "") {
   const pill = $("#connection-pill");
   pill.classList.toggle("is-online", online);
@@ -58,6 +101,14 @@ function setConnection(online, message = "") {
   if (message) $("#connection-message").textContent = message;
 }
 
+// ==========================================
+// CARGA INICIAL Y ESTADO DE LOS REPORTES
+// ==========================================
+
+/**
+ * Recupera reportes y catálogos, actualiza el estado y renderiza las secciones.
+ * @returns {Promise<void>}
+ */
 async function loadData() {
   const refresh = $("#refresh-button");
   refresh.disabled = true;
@@ -108,10 +159,20 @@ async function loadData() {
   }
 }
 
+/**
+ * Suma un campo numérico de las filas recibidas.
+ * @param {Object[]} rows Filas que contienen el campo indicado.
+ * @param {string} field Nombre de la propiedad que se sumará.
+ * @returns {number} Suma numérica de los valores válidos.
+ */
 function sum(rows, field) {
   return rows.reduce((total, row) => total + (Number(row[field]) || 0), 0);
 }
 
+/**
+ * Calcula las métricas principales y actualiza cada visualización de reportes.
+ * @returns {void}
+ */
 function renderReports() {
   if (!state.reports) return;
   const { salesByWaiter, topDishes, lowStock, paymentsByMethod, occupancyByArea } = state.reports;
@@ -131,10 +192,20 @@ function renderReports() {
   applySectionSearch();
 }
 
+/**
+ * Obtiene todos los elementos que coinciden con un selector CSS.
+ * @param {string} selector Selector CSS de los elementos.
+ * @param {ParentNode} [root=document] Nodo desde el que se realiza la búsqueda.
+ * @returns {Element[]} Lista de elementos encontrados.
+ */
 function $$(selector, root = document) {
   return Array.from(root.querySelectorAll(selector));
 }
 
+/**
+ * Filtra las filas de las tablas de la sección activa según la búsqueda global.
+ * @returns {void}
+ */
 function applySectionSearch() {
   const section = $(`#section-${state.currentSection}`);
   const query = $("#global-search").value.trim().toLocaleLowerCase("es-MX");
@@ -170,6 +241,15 @@ function applySectionSearch() {
   });
 }
 
+// ==========================================
+// RENDERIZADO DE REPORTES Y VISUALIZACIONES
+// ==========================================
+
+/**
+ * Dibuja el reporte de ventas por mesero y sincroniza su leyenda y tabla de detalle.
+ * @param {Object[]} rows Ventas agrupadas por mesero.
+ * @returns {void}
+ */
 function renderSalesChart(rows) {
   const canvas = $("#sales-chart");
   const empty = $("#sales-empty");
@@ -185,10 +265,12 @@ function renderSalesChart(rows) {
   const chartRows = rows.slice(0, chartLimit);
   const values = chartRows.map((row) => Number(row.Total_Vendido) || 0);
   drawBars(canvas, values, chartRows.map((row) => row.Mesero));
+  const leaderIndex = values.indexOf(Math.max(...values));
   chartRows.forEach((row, index) => {
     const item = document.createElement("span");
     item.className = "legend-item";
-    item.innerHTML = `<span class="legend-dot" style="background:${chartColors[index % chartColors.length]}"></span>${escapeHtml(row.Mesero)}`;
+    const color = index === leaderIndex ? salesChartColors.leader : salesChartColors.bar;
+    item.innerHTML = `<span class="legend-dot" style="background:${color}"></span>${escapeHtml(row.Mesero)}`;
     $("#sales-legend").append(item);
   });
   $("#sales-by-waiter-body").innerHTML = rows.map((row) => `
@@ -196,6 +278,11 @@ function renderSalesChart(rows) {
   `).join("");
 }
 
+/**
+ * Renderiza la ocupación de mesas por área con su estado y barra de progreso.
+ * @param {Object[]} rows Datos de ocupación agrupados por área.
+ * @returns {void}
+ */
 function renderOccupancy(rows) {
   const container = $("#occupancy-list");
   if (!rows.length) {
@@ -211,6 +298,11 @@ function renderOccupancy(rows) {
   }).join("");
 }
 
+/**
+ * Presenta los platillos con mayor venta en la tabla de resumen.
+ * @param {Object[]} rows Filas del reporte de platillos vendidos.
+ * @returns {void}
+ */
 function renderTopDishes(rows) {
   const body = $("#top-dishes-body");
   if (!rows.length) {
@@ -222,6 +314,11 @@ function renderTopDishes(rows) {
   `).join("");
 }
 
+/**
+ * Muestra las alertas de ingredientes cuyo inventario está bajo.
+ * @param {Object[]} rows Ingredientes reportados con stock bajo.
+ * @returns {void}
+ */
 function renderLowStock(rows) {
   const body = $("#low-stock-body");
   if (!rows.length) {
@@ -233,6 +330,11 @@ function renderLowStock(rows) {
   `).join("");
 }
 
+/**
+ * Dibuja el gráfico de pagos por método y actualiza el total y la leyenda.
+ * @param {Object[]} rows Ingresos agrupados por método de pago.
+ * @returns {void}
+ */
 function renderPaymentChart(rows) {
   const canvas = $("#payment-chart");
   const total = sum(rows, "Total_Ingresado");
@@ -249,6 +351,15 @@ function renderPaymentChart(rows) {
   `).join("");
 }
 
+// ==========================================
+// UTILIDADES Y DIBUJO DE GRÁFICOS EN CANVAS
+// ==========================================
+
+/**
+ * Ajusta la resolución del canvas al tamaño visible y a la densidad de pantalla.
+ * @param {HTMLCanvasElement} canvas Lienzo que se preparará.
+ * @returns {{context: CanvasRenderingContext2D, width: number, height: number}} Contexto y dimensiones CSS.
+ */
 function prepareCanvas(canvas) {
   const rect = canvas.getBoundingClientRect();
   const ratio = window.devicePixelRatio || 1;
@@ -259,6 +370,11 @@ function prepareCanvas(canvas) {
   return { context, width: rect.width, height: rect.height };
 }
 
+/**
+ * Limpia el contenido del canvas y conserva su resolución adaptada a la pantalla.
+ * @param {HTMLCanvasElement} canvas Lienzo que se limpiará.
+ * @returns {void}
+ */
 function clearCanvas(canvas) {
   const rect = canvas.getBoundingClientRect();
   const ratio = window.devicePixelRatio || 1;
@@ -266,12 +382,20 @@ function clearCanvas(canvas) {
   canvas.height = Math.max(1, Math.floor(rect.height * ratio));
 }
 
+/**
+ * Dibuja las barras, guías, valores y etiquetas del reporte de ventas.
+ * @param {HTMLCanvasElement} canvas Lienzo donde se dibujará el gráfico.
+ * @param {number[]} values Valores numéricos de cada barra.
+ * @param {string[]} labels Etiquetas asociadas a los valores.
+ * @returns {void}
+ */
 function drawBars(canvas, values, labels) {
   const { context: ctx, width, height } = prepareCanvas(canvas);
-  const pad = { top: 16, right: 12, bottom: 40, left: 48 };
+  const pad = { top: 30, right: 12, bottom: 42, left: 48 };
   const chartWidth = Math.max(0, width - pad.left - pad.right);
   const chartHeight = Math.max(0, height - pad.top - pad.bottom);
   const max = Math.max(...values, 1);
+  const leaderIndex = values.indexOf(Math.max(...values));
   const ticks = 4;
   ctx.font = "10px Segoe UI, Arial, sans-serif";
   ctx.textBaseline = "middle";
@@ -289,36 +413,80 @@ function drawBars(canvas, values, labels) {
     const barHeight = Math.max(2, chartHeight * value / max);
     const x = pad.left + step * index + (step - barWidth) / 2;
     const y = pad.top + chartHeight - barHeight;
-    ctx.fillStyle = chartColors[index % chartColors.length];
+    ctx.fillStyle = index === leaderIndex ? salesChartColors.leader : salesChartColors.bar;
     ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(x, y, barWidth, barHeight, [3, 3, 0, 0]);
+    if (ctx.roundRect) ctx.roundRect(x + 1, y + 1, Math.max(0, barWidth - 2), Math.max(0, barHeight - 2), [6, 6, 0, 0]);
     else ctx.rect(x, y, barWidth, barHeight);
     ctx.fill();
-    ctx.fillStyle = "#64748b";
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = salesChartColors.outline;
+    ctx.stroke();
+
+    ctx.fillStyle = salesChartColors.outline;
     ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.font = "700 10px Segoe UI, Arial, sans-serif";
+    ctx.fillText(money.format(value), x + barWidth / 2, Math.max(12, y - 7));
+
+    ctx.fillStyle = "#334155";
+    ctx.font = "10px Segoe UI, Arial, sans-serif";
     ctx.textBaseline = "top";
-    ctx.fillText(shortLabel(labels[index], 12), x + barWidth / 2, pad.top + chartHeight + 10);
+    const label = String(labels[index] ?? "");
+    const maxLabelWidth = Math.max(24, step - 8);
+    const lines = [];
+    let line = "";
+    label.split(/\s+/).forEach((word) => {
+      const candidate = line ? `${line} ${word}` : word;
+      if (ctx.measureText(candidate).width <= maxLabelWidth) {
+        line = candidate;
+      } else {
+        if (line) lines.push(line);
+        line = ctx.measureText(word).width <= maxLabelWidth
+          ? word
+          : shortLabel(word, Math.max(4, Math.floor(maxLabelWidth / 6)));
+      }
+    });
+    if (line) lines.push(line);
+    lines.slice(0, 2).forEach((labelLine, lineIndex) => {
+      ctx.fillText(labelLine, pad.left + step * index + step / 2, pad.top + chartHeight + 7 + lineIndex * 12);
+    });
   });
 }
 
+/**
+ * Dibuja un gráfico de dona usando los valores agrupados por método de pago.
+ * @param {HTMLCanvasElement} canvas Lienzo donde se dibujará el gráfico.
+ * @param {number[]} values Valores que determinan el tamaño de cada segmento.
+ * @returns {void}
+ */
 function drawDonut(canvas, values) {
   const { context: ctx, width, height } = prepareCanvas(canvas);
   const total = sum(values.map((value) => ({ value })), "value");
-  const radius = Math.min(width, height) * .42;
-  const lineWidth = Math.max(12, radius * .3);
+  const size = Math.min(width, height);
+  const lineWidth = size * .175;
+  const radius = (size - lineWidth - 2) / 2;
   let start = -Math.PI / 2;
   values.forEach((value, index) => {
     const angle = total ? (value / total) * Math.PI * 2 : 0;
     ctx.beginPath();
-    ctx.strokeStyle = chartColors[index % chartColors.length];
-    ctx.lineWidth = lineWidth;
     ctx.lineCap = "butt";
     ctx.arc(width / 2, height / 2, radius - lineWidth / 2, start, start + angle);
+    ctx.strokeStyle = "#0f172a";
+    ctx.lineWidth = lineWidth + 2;
+    ctx.stroke();
+    ctx.strokeStyle = chartColors[index % chartColors.length];
+    ctx.lineWidth = lineWidth;
     ctx.stroke();
     start += angle;
   });
 }
 
+/**
+ * Abrevia montos grandes para que quepan en las marcas del eje del gráfico.
+ * @param {number|string} value Monto que se desea formatear.
+ * @returns {string} Monto abreviado en pesos.
+ */
 function shortMoney(value) {
   const amount = Number(value) || 0;
   if (amount >= 1000000) return `$${number.format(amount / 1000000)} M`;
@@ -326,11 +494,26 @@ function shortMoney(value) {
   return `$${number.format(amount)}`;
 }
 
+/**
+ * Recorta etiquetas largas y agrega puntos suspensivos al final.
+ * @param {string} label Texto original de la etiqueta.
+ * @param {number} maxLength Longitud máxima permitida.
+ * @returns {string} Etiqueta completa o abreviada.
+ */
 function shortLabel(label, maxLength) {
   const value = String(label ?? "");
   return value.length > maxLength ? `${value.slice(0, maxLength - 1)}…` : value;
 }
 
+// ==========================================
+// NAVEGACIÓN Y CATÁLOGO DE PLATILLOS
+// ==========================================
+
+/**
+ * Activa la sección solicitada y carga sus datos cuando corresponde.
+ * @param {string} section Identificador interno de la sección.
+ * @returns {void}
+ */
 function navigate(section) {
   if (!sectionTitles[section]) return;
   state.currentSection = section;
@@ -356,6 +539,10 @@ function navigate(section) {
   applySectionSearch();
 }
 
+/**
+ * Carga las categorías disponibles en el filtro y mantiene la selección válida.
+ * @returns {void}
+ */
 function populateCategoryFilter() {
   const select = $("#category-filter");
   const previous = select.value;
@@ -369,6 +556,10 @@ function populateCategoryFilter() {
   else renderDishes([]);
 }
 
+/**
+ * Solicita al backend los platillos de la categoría seleccionada.
+ * @returns {Promise<void>}
+ */
 async function loadDishes() {
   const categoryId = $("#category-filter").value;
   const body = $("#dishes-body");
@@ -386,6 +577,11 @@ async function loadDishes() {
   }
 }
 
+/**
+ * Renderiza platillos y sus acciones de actualización de precio y eliminación.
+ * @param {Object[]} rows Platillos de la categoría seleccionada.
+ * @returns {void}
+ */
 function renderDishes(rows) {
   const body = $("#dishes-body");
   if (!rows.length) {
@@ -405,6 +601,14 @@ function renderDishes(rows) {
   applySectionSearch();
 }
 
+// ==========================================
+// CLIENTES, INVENTARIO Y DISPONIBILIDAD
+// ==========================================
+
+/**
+ * Vuelve a consultar los clientes y actualiza su tabla.
+ * @returns {Promise<void>}
+ */
 async function loadCustomers() {
   try {
     state.customers = await api("/api/customers");
@@ -414,6 +618,10 @@ async function loadCustomers() {
   }
 }
 
+/**
+ * Dibuja la lista de clientes con sus datos de contacto.
+ * @returns {void}
+ */
 function renderCustomers() {
   const body = $("#customers-body");
   if (!state.customers.length) {
@@ -427,6 +635,10 @@ function renderCustomers() {
   applySectionSearch();
 }
 
+/**
+ * Consulta el inventario actual desde la API y actualiza la vista.
+ * @returns {Promise<void>}
+ */
 async function loadInventory() {
   try {
     state.inventory = await api("/api/inventory");
@@ -437,6 +649,10 @@ async function loadInventory() {
   }
 }
 
+/**
+ * Renderiza ingredientes, niveles de stock y el aviso de existencias mínimas.
+ * @returns {void}
+ */
 function renderInventory() {
   const body = $("#inventory-body");
   const low = state.inventory.filter((item) => Number(item.stock_actual) <= Number(item.stock_minimo));
@@ -455,6 +671,10 @@ function renderInventory() {
   applySectionSearch();
 }
 
+/**
+ * Habilita o deshabilita las acciones según mesas, meseros y órdenes disponibles.
+ * @returns {void}
+ */
 function renderOperationAvailability() {
   const canOpenOrder = state.lookups.availableTables.length > 0 && state.lookups.employees.length > 0;
   const openButton = $("#open-order-button");
@@ -472,6 +692,18 @@ function renderOperationAvailability() {
     : "Abre una orden para habilitar el registro de pago.";
 }
 
+// ==========================================
+// FORMULARIOS Y OPERACIONES DEL PANEL
+// ==========================================
+
+/**
+ * Construye el marcado de un control de formulario según su tipo y opciones.
+ * @param {string} name Nombre del campo.
+ * @param {string} label Etiqueta visible del campo.
+ * @param {string} [type="text"] Tipo de control: texto, selección o área de texto.
+ * @param {Object} [options={}] Restricciones, opciones y textos auxiliares del campo.
+ * @returns {string} Marcado HTML del campo.
+ */
 function field(name, label, type = "text", options = {}) {
   const hint = options.hint ? `<small class="field-hint">${escapeHtml(options.hint)}</small>` : "";
   const common = `class="field-control" id="field-${escapeHtml(name)}" name="${escapeHtml(name)}" ${options.required ? "required" : ""} ${options.min != null ? `min="${options.min}"` : ""} ${options.max != null ? `max="${options.max}"` : ""} ${options.step ? `step="${options.step}"` : ""} ${options.maxLength ? `maxlength="${options.maxLength}"` : ""}`;
@@ -487,6 +719,7 @@ function field(name, label, type = "text", options = {}) {
   return `<div class="field-group"><label for="field-${escapeHtml(name)}">${escapeHtml(label)}${options.required ? " *" : ""}</label>${control}${hint}</div>`;
 }
 
+/** Define títulos, campos y llamadas API para cada operación disponible. */
 const formDefinitions = {
   "new-dish": {
     title: "Crear platillo",
@@ -558,6 +791,11 @@ const formDefinitions = {
   }
 };
 
+/**
+ * Prepara y abre el diálogo correspondiente a una acción del panel.
+ * @param {string} action Identificador de la acción configurada en formDefinitions.
+ * @returns {void}
+ */
 function openForm(action) {
   const definition = formDefinitions[action];
   if (!definition) return;
@@ -574,6 +812,11 @@ function openForm(action) {
   $("#dialog-fields input, #dialog-fields select, #dialog-fields textarea")?.focus();
 }
 
+/**
+ * Valida el formulario, envía sus datos y presenta el resultado de la operación.
+ * @param {SubmitEvent} event Evento de envío del formulario.
+ * @returns {Promise<void>}
+ */
 async function submitForm(event) {
   event.preventDefault();
   const form = event.currentTarget;
@@ -609,6 +852,15 @@ async function submitForm(event) {
   }
 }
 
+// ==========================================
+// ACCIONES SOBRE PLATILLOS
+// ==========================================
+
+/**
+ * Guarda el platillo seleccionado como contexto y abre el formulario de precio.
+ * @param {HTMLButtonElement} button Botón que contiene el identificador y precio actual.
+ * @returns {void}
+ */
 function updateDishPrice(button) {
   state.editingDishPrice = {
     id: Number(button.dataset.id),
@@ -618,6 +870,11 @@ function updateDishPrice(button) {
   openForm("edit-price");
 }
 
+/**
+ * Solicita confirmación y elimina el platillo seleccionado mediante la API.
+ * @param {HTMLButtonElement} button Botón con los datos del platillo.
+ * @returns {Promise<void>}
+ */
 async function deleteDish(button) {
   if (!window.confirm(`¿Eliminar el platillo "${button.dataset.name}"? Esta acción no se puede deshacer.`)) return;
   try {
@@ -630,6 +887,14 @@ async function deleteDish(button) {
   }
 }
 
+// ==========================================
+// EVENTOS E INICIALIZACIÓN
+// ==========================================
+
+/**
+ * Conecta los controles de navegación, búsqueda, diálogos y operaciones del panel.
+ * @returns {void}
+ */
 function wireEvents() {
   $$(".nav-link").forEach((button) => button.addEventListener("click", () => navigate(button.dataset.section)));
   $$("[data-section-link]").forEach((button) => button.addEventListener("click", () => navigate(button.dataset.sectionLink)));
@@ -676,10 +941,15 @@ function wireEvents() {
   });
 }
 
+/**
+ * Actualiza la fecha y hora visibles usando la configuración regional del panel.
+ * @returns {void}
+ */
 function updateDateTime() {
   $("#today-label").textContent = new Intl.DateTimeFormat("es-MX", { dateStyle: "medium", timeStyle: "short" }).format(new Date());
 }
 
+// Inicia el reloj del encabezado, enlaza los eventos y carga los datos de la API.
 updateDateTime();
 window.setInterval(updateDateTime, 60_000);
 wireEvents();

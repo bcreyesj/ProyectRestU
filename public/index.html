@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="es">
 <head>
+  <!-- ========================================== -->
+  <!-- METADATOS Y RECURSOS DE ESTILOS -->
+  <!-- Configura idioma, vista adaptable, tema del navegador y hojas de estilo. -->
+  <!-- ========================================== -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0f172a">
@@ -17,6 +21,10 @@
     FIRST VIEWPORT: Sidebar fija; encabezado con búsqueda, conexión y hora; cuatro métricas reales sobre reportes y ocupación.
     FORM: Dirección fijada por el brief; dashboard de reportes y tablas; no se usó semilla porque jerarquía, paleta y patrones están especificados.
   -->
+  <!-- ========================================== -->
+  <!-- ICONOGRAFÍA SVG COMPARTIDA -->
+  <!-- Define símbolos vectoriales reutilizados por navegación, reportes y acciones. -->
+  <!-- ========================================== -->
   <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <symbol id="icon-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></symbol>
     <symbol id="icon-utensils" viewBox="0 0 24 24"><path d="M7 3v7M4.5 3v4a2.5 2.5 0 0 0 5 0V3M7 9.5V21M17 3v18M17 3c-2.2 2-3 4.5-3 7h3"/></symbol>
@@ -40,7 +48,12 @@
     <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
   </svg>
 
+  <!-- ========================================== -->
+  <!-- ESTRUCTURA PRINCIPAL DEL PANEL -->
+  <!-- Agrupa la navegación lateral y el espacio de trabajo adaptable. -->
+  <!-- ========================================== -->
   <div class="app-shell">
+    <!-- Barra lateral con identidad del restaurante, navegación y estado de conexión. -->
     <aside class="sidebar" id="sidebar" aria-label="Navegación lateral">
       <a class="brand" href="#inicio" aria-label="Restaurante, ir al resumen">
         <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#icon-utensils"/></svg></span>
@@ -63,9 +76,11 @@
         <div class="sidebar-version">Administración local <span>·</span> SQL Server</div>
       </div>
     </aside>
+    <!-- Fondo interactivo que permite cerrar el menú lateral en pantallas pequeñas. -->
     <button class="sidebar-scrim" id="sidebar-scrim" type="button" aria-label="Cerrar navegación" tabindex="-1"></button>
 
     <div class="main-shell">
+      <!-- Encabezado de utilidades: menú móvil, ruta, búsqueda, fecha, conexión y perfil local. -->
       <header class="topbar">
         <div class="topbar-leading">
           <button class="icon-button mobile-menu" id="menu-toggle" type="button" aria-label="Abrir navegación" aria-expanded="false" aria-controls="sidebar">
@@ -92,19 +107,27 @@
         </div>
       </header>
 
+      <!-- Contenido principal: alertas globales y secciones navegables del panel. -->
       <main class="content">
+        <!-- Alerta persistente para informar fallos de SQL Server y permitir reintentar la consulta. -->
         <div class="connection-alert" id="connection-alert" role="alert" hidden>
           <span class="alert-symbol" aria-hidden="true"><svg class="icon"><use href="#icon-alert"/></svg></span>
           <div class="alert-copy"><strong>No hay conexión con SQL Server.</strong><p id="connection-message">Comprueba la conexión y la configuración del archivo .env.</p></div>
           <button class="button button-outline alert-retry" id="retry-button" type="button">Reintentar</button>
         </div>
+        <!-- Toast accesible que app.js actualiza para confirmar operaciones o notificar errores. -->
         <div class="toast-message" id="toast-message" role="status" aria-live="polite" hidden></div>
 
+        <!-- ========================================== -->
+        <!-- RESUMEN Y REPORTES -->
+        <!-- Reúne métricas y visualizaciones de ventas, ocupación, pagos e inventario. -->
+        <!-- ========================================== -->
         <section class="page-section active" id="section-inicio" aria-labelledby="page-title-inicio">
           <div class="page-heading">
             <div class="page-title-copy"><h1 id="page-title-inicio">Resumen del restaurante</h1><p>Ventas, sala e inventario en un solo lugar.</p></div>
             <button class="button button-primary" type="button" data-action="new-dish"><svg class="icon" aria-hidden="true"><use href="#icon-plus"/></svg>Nuevo platillo</button>
           </div>
+          <!-- Tarjetas KPI con los indicadores agregados que calcula app.js a partir de los reportes. -->
           <div class="metric-grid" id="metric-grid" aria-live="polite">
             <article class="metric-card">
               <span class="metric-icon metric-icon-blue"><svg class="icon" aria-hidden="true"><use href="#icon-wallet"/></svg></span>
@@ -124,11 +147,13 @@
             </article>
           </div>
 
+          <!-- Reportes principales: ventas por mesero y ocupación por área. -->
           <div class="report-grid report-grid-main">
             <article class="report-panel">
               <div class="panel-heading"><div><h2>Ventas por mesero</h2><p>Órdenes y total vendido</p></div><span class="panel-icon panel-icon-blue"><svg class="icon" aria-hidden="true"><use href="#icon-chart"/></svg></span></div>
               <div class="chart-wrap chart-wrap-sales"><canvas id="sales-chart" role="img" aria-label="Gráfico de ventas por mesero"></canvas><div class="empty-chart" id="sales-empty">Los datos aparecerán cuando haya pagos registrados.</div></div>
               <div class="chart-legend" id="sales-legend"></div>
+              <!-- Tabla con el detalle completo de ventas; el gráfico solo resume los primeros resultados. -->
               <details class="sales-details"><summary id="sales-details-summary">Ver detalle de todos los meseros</summary><div class="table-wrap"><table class="data-table"><thead><tr><th>Mesero</th><th>Órdenes</th><th>Total vendido</th></tr></thead><tbody id="sales-by-waiter-body"></tbody></table></div></details>
             </article>
             <article class="report-panel">
@@ -137,6 +162,7 @@
             </article>
           </div>
 
+          <!-- Reportes secundarios con tablas de platillos vendidos y distribución de pagos. -->
           <div class="report-grid report-grid-secondary">
             <article class="report-panel">
               <div class="panel-heading"><div><h2>Platillos más vendidos</h2><p>Unidades y recaudación acumuladas</p></div><span class="panel-icon panel-icon-green"><svg class="icon" aria-hidden="true"><use href="#icon-utensils"/></svg></span></div>
@@ -148,6 +174,7 @@
             </article>
           </div>
 
+          <!-- Tabla de alertas de stock bajo con acceso directo al módulo de inventario. -->
           <article class="report-panel low-stock-panel">
             <div class="panel-heading"><div><h2>Inventario que requiere atención</h2><p>Ingredientes por debajo del nivel mínimo</p></div><button class="text-button" type="button" data-section-link="inventario">Ver inventario<svg class="icon" aria-hidden="true"><use href="#icon-arrow"/></svg></button></div>
             <div class="table-wrap"><table class="data-table"><thead><tr><th>Ingrediente</th><th>Existencia</th><th>Mínimo</th><th>Estado</th></tr></thead><tbody id="low-stock-body"><tr><td class="empty-cell" colspan="4">Esperando datos de SQL Server…</td></tr></tbody></table></div>
@@ -155,6 +182,10 @@
           <p class="data-footnote">Los reportes reflejan las vistas de SQL Server. La base suministrada no contiene filtros por fecha.</p>
         </section>
 
+        <!-- ========================================== -->
+        <!-- MÓDULO DE PLATILLOS -->
+        <!-- Permite consultar el catálogo por categoría y acceder a las acciones CRUD disponibles. -->
+        <!-- ========================================== -->
         <section class="page-section" id="section-platillos" aria-labelledby="page-title-platillos" hidden>
           <div class="page-heading"><div class="page-title-copy"><h1 id="page-title-platillos">Platillos</h1><p>Administra el catálogo y los precios del menú.</p></div><button class="button button-primary" type="button" data-action="new-dish"><svg class="icon" aria-hidden="true"><use href="#icon-plus"/></svg>Crear platillo</button></div>
           <article class="report-panel module-panel">
@@ -164,6 +195,10 @@
           <p class="data-footnote">Las operaciones de alta, consulta, actualización de precio y baja usan los procedimientos almacenados del esquema.</p>
         </section>
 
+        <!-- ========================================== -->
+        <!-- MÓDULO DE CLIENTES -->
+        <!-- Presenta el directorio consultado y la acción para registrar un cliente nuevo. -->
+        <!-- ========================================== -->
         <section class="page-section" id="section-clientes" aria-labelledby="page-title-clientes" hidden>
           <div class="page-heading"><div class="page-title-copy"><h1 id="page-title-clientes">Clientes</h1><p>Consulta el directorio y registra nuevos clientes.</p></div><button class="button button-primary" type="button" data-action="new-customer"><svg class="icon" aria-hidden="true"><use href="#icon-plus"/></svg>Registrar cliente</button></div>
           <article class="report-panel module-panel">
@@ -173,6 +208,10 @@
           <p class="data-footnote">El esquema proporcionado incluye un procedimiento para registrar clientes, pero no define procedimientos de actualización o eliminación.</p>
         </section>
 
+        <!-- ========================================== -->
+        <!-- MÓDULO DE ÓRDENES Y PAGOS -->
+        <!-- Expone las operaciones disponibles de apertura de orden y registro de pago. -->
+        <!-- ========================================== -->
         <section class="page-section" id="section-ordenes" aria-labelledby="page-title-ordenes" hidden>
           <div class="page-heading"><div class="page-title-copy"><h1 id="page-title-ordenes">Órdenes y pagos</h1><p>Abre una orden de mesa o procesa el pago de una orden activa.</p></div></div>
           <div class="operation-grid">
@@ -182,6 +221,10 @@
           <div class="notice-panel"><strong>Nota sobre el esquema</strong><p>El procedimiento <code>sp_AbrirOrden</code> crea la orden, pero no agrega platillos ni cambia el estado de la mesa. El total del pago se captura manualmente porque la base no define un cálculo de cuenta en ese procedimiento.</p></div>
         </section>
 
+        <!-- ========================================== -->
+        <!-- MÓDULO DE INVENTARIO -->
+        <!-- Muestra existencias y niveles mínimos, con acceso al formulario de reabastecimiento. -->
+        <!-- ========================================== -->
         <section class="page-section" id="section-inventario" aria-labelledby="page-title-inventario" hidden>
           <div class="page-heading"><div class="page-title-copy"><h1 id="page-title-inventario">Inventario</h1><p>Revisa existencias y repón ingredientes.</p></div><button class="button button-primary" type="button" data-action="restock"><svg class="icon" aria-hidden="true"><use href="#icon-plus"/></svg>Reabastecer ingrediente</button></div>
           <article class="report-panel module-panel">
@@ -191,10 +234,15 @@
           <p class="data-footnote">El procedimiento de reabastecimiento suma la cantidad indicada al stock actual.</p>
         </section>
       </main>
+      <!-- Pie del panel con el contexto local y la hora de la última actualización de datos. -->
       <footer class="app-footer"><span>Restaurante <span class="footer-divider">·</span> Administración local</span><span id="last-updated">Esperando datos de SQL Server</span></footer>
     </div>
   </div>
 
+  <!-- ========================================== -->
+  <!-- DIÁLOGO DE FORMULARIOS CRUD -->
+  <!-- Contenedor modal accesible cuyos campos y operación se generan desde app.js. -->
+  <!-- ========================================== -->
   <dialog class="app-dialog" id="form-dialog" aria-labelledby="dialog-title">
     <form id="action-form" method="dialog" novalidate>
       <div class="dialog-heading"><div><h2 id="dialog-title"></h2><p id="dialog-description"></p></div><button class="icon-button dialog-close" type="button" aria-label="Cerrar"><svg class="icon" aria-hidden="true"><use href="#icon-close"/></svg></button></div>
@@ -203,6 +251,7 @@
       <div class="dialog-actions"><button class="button button-outline dialog-cancel" type="button">Cancelar</button><button class="button button-primary submit-button" id="form-submit" type="submit"><span class="button-spinner" aria-hidden="true"></span><span id="submit-label">Guardar</span></button></div>
     </form>
   </dialog>
-  <script src="/app.js" defer></script>
+  <!-- Carga diferida de la lógica que conecta controles, datos y endpoints de la aplicación. -->
+    <script src="/app.js" defer></script>
 </body>
 </html>

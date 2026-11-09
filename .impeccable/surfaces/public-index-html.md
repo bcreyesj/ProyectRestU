@@ -21,7 +21,7 @@ Use the five SQL Server report views and the stored procedures provided in `BDRe
 
 ## Chosen direction
 
-A clean operations console: deep navy navigation, a cool slate workspace, white report surfaces, blue primary actions, and emerald/amber/red text-paired statuses. A persistent utility header filters the active section and shows the database state, current local date/time, refresh, and local-administration context. The first screen leads with four truthful KPIs and then the five supplied report views. Search filters only rows in the current section. Responsive behavior narrows the rail, changes it into a drawer, and stacks report columns on mobile.
+A clean neo-brutalist operations board: white navigation with dark labels and cobalt active state, a near-white slate workspace, and white report surfaces with crisp 2px ink outlines and offset slab shadows. Emerald/amber/red remain text-paired operational states. A persistent 84px desktop utility header filters the active section and shows database state, local date/time, refresh, and local-administration context. The first screen leads with four truthful KPIs in 38px numerals and then the five supplied report views. Desktop tables use 12px tracked uppercase headers and 15px cells with generous padding. Search filters only rows in the current section. Responsive behavior changes the rail into a drawer, stacks report columns, and keeps compact mobile type.
 
 ## Memorable moment
 
